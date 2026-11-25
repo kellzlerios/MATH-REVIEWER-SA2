@@ -1,1 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Term 2 Second Summative Test Reviewer — Interactive Quiz Game</title>
+  <!-- Google Fonts: Inter & JetBrains Mono for crisp math readability -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
 
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & THEME SYSTEM (Adapts smoothly to Dark & Light Mode)
+       ========================================================================== */
+    :root {
+      --bg-app: #f1f5f9;
+      --bg-surface: #ffffff;
+      --bg-surface-alt: #f8fafc;
+      --bg-hover: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border-subtle: #e2e8f0;
+      --border-strong: #cbd5e1;
+
+      --accent-primary: #2563eb;
+      --accent-primary-hover: #1d4ed8;
+      --accent-soft: rgba(37, 99, 235, 0.12);
+
+      --success-bg: #dcfce7;
+      --success-border: #16a34a;
+      --success-text: #14532d;
+
+      --error-bg: #fee2e2;
+      --error-border: #dc2626;
+      --error-text: #7f1d1d;
+
+      --warning-bg: #fef3c7;
+      --warning-text: #92400e;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-app: #0b1120;
+      --bg-surface: #131c31;
+      --bg-surface-alt: #1a2642;
+      --bg-hover: #213052;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border-subtle: #24324d;
+      --border-strong: #33466b;
+
+      --accent-primary: #3b82f6;
+      --accent-primary-hover: #60a5fa;
+      --accent-soft: rgba(59, 130, 246, 0.18);
+
+      --success-bg: rgba(22, 163, 74, 0.22);
+      --success-border: #22c55e;
+      --success-text: #bbf7d0;
+
+      --error-bg: rgba(220, 38, 38, 0.22);
+      --error-border: #f87171;
+      --error-text: #fecaca;
+
+      --warning-bg: rgba(245, 158, 11, 0.2);
+      --warning-text: #fde68a;
+
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 14px 30px -6px rgba(0, 0, 0, 0.45);
+    }
+
+    /* ==========================================================================
+       BASE RESET & LAYOUT
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      line-height: 1.5;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    /* ==========================================================================
+       HEADER BAR
+       ========================================================================== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .brand-text span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      min-width: 42px;
+      height: 42px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-alt);
+      color: var(--text-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: var(--transition);
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-strong);
+    }
+
+    /* ==========================================================================
+       CARDS & SCREENS
+       ========================================================================== */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      animation: fadeSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 18px;
+      }
+    }
+
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ==========================================================================
+       START SCREEN CONTROLS
+       ========================================================================== */
+    .hero-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 6px;
+    }
+
+    .hero-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.94rem;
+      margin-bottom: 22px;
+    }
+
+    .section-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    @media (max-width: 540px) {
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cat-option {
+      text-align: left;
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-subtle);
+      background: var(--bg-surface-alt);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cat-option:hover {
+      border-color: var(--border-strong);
+    }
+
+    .cat-option.selected {
+      border-color: var(--accent-primary);
+      background: var(--accent-soft);
+    }
+
+    .cat-title {
+      font-weight: 700;
+      font-size: 0.94rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cat-count {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .cat-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Toggle Settings */
+    .settings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      gap: 12px;
+    }
+
+    .setting-info strong {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .setting-info span {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Accessible Switch Toggle */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: var(--border-strong);
+      border-radius: 999px;
+      transition: 0.25s;
+    }
+
+    .slider::before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      transition: 0.25s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent-primary);
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(22px);
+    }
+
+    /* Primary CTA Buttons */
+    .btn-primary {
+      width: 100%;
+      min-height: 52px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 18px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      background: var(--bg-surface-alt);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+    }
+
+    /* ==========================================================================
+       ACTIVE QUIZ HUD & QUESTION CARD
+       ========================================================================== */
+    .hud-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .hud-box {
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .hud-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .hud-value {
+      font-size: 1.15rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+    }
+
+    .streak-badge {
+      color: #f59e0b;
+    }
+
+    .timer-danger {
+      color: #ef4444;
+      animation: pulseText 0.8s infinite alternate;
+    }
+
+    @keyframes pulseText {
+      from { opacity: 1; }
+      to { opacity: 0.55; }
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-surface-alt);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+      border-radius: 999px;
+      transition: width 0.35s ease;
+    }
+
+    .question-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .q-pill {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent-primary);
+    }
+
+    .q-orig-num {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .question-text {
+      font-size: 1.16rem;
+      font-weight: 700;
+      line-height: 1.48;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+
+    /* Answer Choices */
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-btn {
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border-subtle);
+      background: var(--bg-surface-alt);
+      color: var(--text-primary);
+      font-size: 0.98rem;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: var(--transition);
+    }
+
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent-primary);
+      background: var(--accent-soft);
+      transform: translateX(2px);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+    }
+
+    .option-letter {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      font-weight: 700;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--text-secondary);
+    }
+
+    .option-btn.correct {
+      border-color: var(--success-border);
+      background: var(--success-bg);
+      color: var(--success-text);
+      font-weight: 600;
+    }
+
+    .option-btn.correct .option-letter {
+      background: var(--success-border);
+      border-color: var(--success-border);
+      color: #ffffff;
+    }
+
+    .option-btn.incorrect {
+      border-color: var(--error-border);
+      background: var(--error-bg);
+      color: var(--error-text);
+      animation: shake 0.32s ease;
+    }
+
+    .option-btn.incorrect .option-letter {
+      background: var(--error-border);
+      border-color: var(--error-border);
+      color: #ffffff;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* Step-by-Step Explanation Box */
+    .feedback-panel {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      border-left: 4px solid var(--accent-primary);
+      background: var(--bg-surface-alt);
+      animation: fadeSlideUp 0.25s ease;
+    }
+
+    .feedback-panel.is-correct {
+      border-left-color: var(--success-border);
+    }
+
+    .feedback-panel.is-wrong {
+      border-left-color: var(--error-border);
+    }
+
+    .feedback-header {
+      font-weight: 800;
+      font-size: 0.98rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback-body {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .math-highlight {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      background: var(--bg-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+    }
+
+    .next-action-wrap {
+      margin-top: 18px;
+    }
+
+    /* ==========================================================================
+       SUMMARY SCREEN & MISSED REVIEW
+       ========================================================================== */
+    .score-hero {
+      text-align: center;
+      padding: 20px 12px;
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      margin-bottom: 20px;
+    }
+
+    .score-circle {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .score-circle .pct {
+      font-size: 1.65rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .score-circle .sub {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.9;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .cat-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .cat-bar-row {
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+
+    .cat-bar-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .summary-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .summary-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Missed Questions Accordion/List */
+    .missed-list {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .missed-item {
+      padding: 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-alt);
+    }
+
+    .missed-q {
+      font-weight: 700;
+      font-size: 0.94rem;
+      margin-bottom: 8px;
+    }
+
+    .missed-ans-row {
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+
+    .tag-wrong {
+      color: #dc2626;
+      font-weight: 700;
+    }
+
+    .tag-right {
+      color: #16a34a;
+      font-weight: 700;
+    }
+
+    [data-theme="dark"] .tag-wrong { color: #f87171; }
+    [data-theme="dark"] .tag-right { color: #4ade80; }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- TOP HEADER -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-badge">∑</div>
+        <div class="brand-text">
+          <h1>Term 2 Summative Reviewer</h1>
+          <span>30-Item Interactive Math Quiz</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="quitBtn" class="icon-btn hidden" title="Return to Menu">Menu</button>
+        <button id="themeToggle" class="icon-btn" aria-label="Toggle dark or light theme">🌙 Dark</button>
+      </div>
+    </header>
+
+    <!-- ======================================================================
+         SCREEN 1: START & CONFIGURATION
+         ====================================================================== -->
+    <main id="startScreen" class="card">
+      <h2 class="hero-title">Ready for Your Term 2 Test?</h2>
+      <p class="hero-subtitle">
+        Practice all 30 reviewer problems with instant step-by-step solutions, streak bonuses, and customizable study modes.
+      </p>
+
+      <span class="section-label">1. Choose Topic Category</span>
+      <div class="category-grid" id="categorySelector">
+        <button type="button" class="cat-option selected" data-category="all">
+          <div class="cat-title">
+            <span>All Topics</span>
+            <span class="cat-count">30 Qs</span>
+          </div>
+          <span class="cat-desc">Complete summative test simulation</span>
+        </button>
+
+        <button type="button" class="cat-option" data-category="trig">
+          <div class="cat-title">
+            <span>Trigonometry &amp; Bearings</span>
+            <span class="cat-count">10 Qs</span>
+          </div>
+          <span class="cat-desc">SOH-CAH-TOA, Laws, Elevation &amp; Bearings</span>
+        </button>
+
+        <button type="button" class="cat-option" data-category="geometry">
+          <div class="cat-title">
+            <span>Area, Volume &amp; Capacity</span>
+            <span class="cat-count">13 Qs</span>
+          </div>
+          <span class="cat-desc">Composite areas, prisms, cylinders &amp; units</span>
+        </button>
+
+        <button type="button" class="cat-option" data-category="word">
+          <div class="cat-title">
+            <span>Word Problems &amp; Costs</span>
+            <span class="cat-count">7 Qs</span>
+          </div>
+          <span class="cat-desc">Unit rates, optimization &amp; contractor quotes</span>
+        </button>
+      </div>
+
+      <span class="section-label">2. Game &amp; Study Options</span>
+      <div class="settings-list">
+        <label class="setting-row">
+          <div class="setting-info">
+            <strong>Shuffle Question Order</strong>
+            <span>Randomize sequence on every playthrough</span>
+          </div>
+          <span class="switch">
+            <input type="checkbox" id="shuffleQuestionsToggle" checked />
+            <span class="slider"></span>
+          </span>
+        </label>
+
+        <label class="setting-row">
+          <div class="setting-info">
+            <strong>Shuffle Answer Choices</strong>
+            <span>Randomize A, B, C, D positions</span>
+          </div>
+          <span class="switch">
+            <input type="checkbox" id="shuffleOptionsToggle" checked />
+            <span class="slider"></span>
+          </span>
+        </label>
+
+        <label class="setting-row">
+          <div class="setting-info">
+            <strong>Timed Challenge Mode (45s / question)</strong>
+            <span>Earn speed bonus points under time pressure</span>
+          </div>
+          <span class="switch">
+            <input type="checkbox" id="timedModeToggle" />
+            <span class="slider"></span>
+          </span>
+        </label>
+      </div>
+
+      <button type="button" id="startQuizBtn" class="btn-primary">
+        Start Quiz Session &rarr;
+      </button>
+    </main>
+
+    <!-- ======================================================================
+         SCREEN 2: ACTIVE QUIZ GAMEPLAY
+         ====================================================================== -->
+    <section id="quizScreen" class="card hidden">
+      <!-- Live HUD -->
+      <div class="hud-grid">
+        <div class="hud-box">
+          <div class="hud-label">Score</div>
+          <div class="hud-value" id="hudScore">0</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-label">Streak</div>
+          <div class="hud-value streak-badge" id="hudStreak">0 🔥</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-label" id="hudThirdLabel">Progress</div>
+          <div class="hud-value" id="hudThirdValue">1 / 30</div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-track">
+        <div class="progress-fill" id="progressBar"></div>
+      </div>
+
+      <!-- Question Metadata -->
+      <div class="question-meta">
+        <span class="q-pill" id="qCategoryBadge">Trigonometry &amp; Bearings</span>
+        <span class="q-orig-num" id="qNumberLabel">Question 1 of 30</span>
+      </div>
+
+      <!-- Question Prompt -->
+      <h2 class="question-text" id="questionText">Loading question...</h2>
+
+      <!-- Multiple Choice Options -->
+      <div class="options-list" id="optionsContainer"></div>
+
+      <!-- Step-by-Step Feedback -->
+      <div id="feedbackPanel" class="feedback-panel hidden">
+        <div class="feedback-header" id="feedbackTitle"></div>
+        <div class="feedback-body" id="feedbackExplanation"></div>
+      </div>
+
+      <!-- Next Button -->
+      <div class="next-action-wrap hidden" id="nextBtnWrap">
+        <button type="button" id="nextQuestionBtn" class="btn-primary">
+          Next Question &rarr;
+        </button>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SCREEN 3: END-OF-GAME SUMMARY
+         ====================================================================== -->
+    <section id="summaryScreen" class="card hidden">
+      <div class="score-hero">
+        <div class="score-circle">
+          <span class="pct" id="finalAccuracy">0%</span>
+          <span class="sub">Accuracy</span>
+        </div>
+        <h2 class="hero-title" id="summaryHeadline">Great Effort!</h2>
+        <p class="hero-subtitle" id="summarySubtext" style="margin-bottom:0;">
+          You completed the Term 2 Summative Test Reviewer.
+        </p>
+      </div>
+
+      <div class="summary-stats">
+        <div class="hud-box">
+          <div class="hud-label">Total Points</div>
+          <div class="hud-value" id="finalPoints">0</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-label">Correct</div>
+          <div class="hud-value" id="finalCorrectCount">0 / 30</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-label">Best Streak</div>
+          <div class="hud-value streak-badge" id="finalBestStreak">0 🔥</div>
+        </div>
+      </div>
+
+      <span class="section-label">Performance by Category</span>
+      <div class="cat-breakdown" id="categoryBreakdown"></div>
+
+      <div class="summary-actions">
+        <button type="button" id="reviewMissedBtn" class="btn-secondary hidden">
+          Review Missed Questions (0)
+        </button>
+        <button type="button" id="playAgainBtn" class="btn-primary">
+          Play Again ↻
+        </button>
+      </div>
+
+      <!-- Collapsible Missed Questions Review -->
+      <div id="missedReviewContainer" class="missed-list hidden"></div>
+    </section>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       COMPLETE 30-QUESTION DATASET (TERM 2 SECOND SUMMATIVE TEST REVIEWER)
+       Categories: 'trig' | 'geometry' | 'word'
+       ========================================================================== */
+    const QUESTIONS_DB = [
+      {
+        id: 1,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "Which trigonometric ratio is the adjacent side divided by the hypotenuse in a right triangle?",
+        options: ["Sine (sin)", "Cosine (cos)", "Tangent (tan)", "Cosecant (csc)"],
+        answer: "Cosine (cos)",
+        explanation: "Using SOH-CAH-TOA, CAH stands for Cosine = Adjacent ÷ Hypotenuse."
+      },
+      {
+        id: 2,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "What is the three-figure bearing equivalent of South 35° East?",
+        options: ["035°", "145°", "215°", "325°"],
+        answer: "145°",
+        explanation: "Due South corresponds to 180°. Rotating 35° toward the East gives 180° − 35° = 145°."
+      },
+      {
+        id: 3,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "All three side lengths of an oblique triangle are given (SSS). Which law can be used to determine an unknown angle?",
+        options: ["Law of Sines", "Law of Cosines", "Pythagorean Theorem", "Law of Tangents"],
+        answer: "Law of Cosines",
+        explanation: "The Law of Cosines is used when all three sides (SSS) or two sides and their included angle (SAS) are known."
+      },
+      {
+        id: 4,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "Two sides of an oblique triangle measure 9 m and 12 m, and their included angle is 55°. Which law should be used to find the third side?",
+        options: ["Law of Sines", "Law of Cosines", "SOH-CAH-TOA", "Heron's Formula"],
+        answer: "Law of Cosines",
+        explanation: "Having two sides and the included angle (SAS) directly matches the Law of Cosines: c² = a² + b² − 2ab cos(C)."
+      },
+      {
+        id: 5,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "In a right triangle, the side opposite a 38° angle measures 14 cm. If the hypotenuse is denoted as h, which equation correctly represents this relationship?",
+        options: ["cos 38° = 14 / h", "tan 38° = 14 / h", "sin 38° = 14 / h", "sin 38° = h / 14"],
+        answer: "sin 38° = 14 / h",
+        explanation: "Since Sine = Opposite ÷ Hypotenuse, substituting the values yields sin 38° = 14 / h."
+      },
+      {
+        id: 6,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "Which statement best describes the difference between volume and capacity?",
+        options: [
+          "Volume is the space occupied; capacity is the amount a container can hold.",
+          "Volume is measured in liters; capacity is measured only in square meters.",
+          "Volume applies only to liquids; capacity applies only to solid cubes.",
+          "Volume and capacity always refer to the outer surface area of an object."
+        ],
+        answer: "Volume is the space occupied; capacity is the amount a container can hold.",
+        explanation: "Volume measures the three-dimensional space an object occupies (e.g., cm³, m³), while capacity refers to the maximum amount of substance a container can hold (e.g., mL, L)."
+      },
+      {
+        id: 7,
+        category: "word",
+        categoryName: "Word Problems & Costs",
+        question: "A classroom floor has an area of 96 m². One gallon of paint covers 32 m² and costs ₱1,200. What is the total cost to paint the floor?",
+        options: ["₱2,400", "₱3,600", "₱4,800", "₱6,000"],
+        answer: "₱3,600",
+        explanation: "Gallons needed = 96 m² ÷ 32 m²/gal = 3 gallons. Total cost = 3 × ₱1,200 = ₱3,600."
+      },
+      {
+        id: 8,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A triangular garden has a base of 8 m and a perpendicular height of 5 m. Artificial grass costs ₱180 per m². What is the total cost?",
+        options: ["₱3,600", "₱1,800", "₱7,200", "₱2,340"],
+        answer: "₱3,600",
+        explanation: "Triangle Area = ½ × base × height = ½ × 8 × 5 = 20 m². Total cost = 20 × ₱180 = ₱3,600."
+      },
+      {
+        id: 9,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "Which unit is appropriate for reporting the area of a circular courtyard?",
+        options: ["Meters (m)", "Cubic meters (m³)", "Liters (L)", "Square meters (m²)"],
+        answer: "Square meters (m²)",
+        explanation: "Area is a two-dimensional surface measurement, so it is always expressed in square units such as square meters (m²)."
+      },
+      {
+        id: 10,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A triangular flower bed has sides of 5 m, 6 m, and 7 m. Fencing costs ₱150 per meter. What is the total fencing cost?",
+        options: ["₱2,550", "₱2,700", "₱3,150", "₱1,800"],
+        answer: "₱2,700",
+        explanation: "Perimeter = 5 m + 6 m + 7 m = 18 m. Total fencing cost = 18 × ₱150 = ₱2,700."
+      },
+      {
+        id: 11,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A tank contains 75,000 cm³ of water. How many liters of water does it contain?",
+        options: ["7.5 L", "75 L", "750 L", "7,500 L"],
+        answer: "75 L",
+        explanation: "Because 1 liter = 1,000 cm³, divide by 1,000: 75,000 ÷ 1,000 = 75 L."
+      },
+      {
+        id: 12,
+        category: "word",
+        categoryName: "Word Problems & Costs",
+        question: "A bakery will produce 160 loaves of bread, and each loaf requires 0.4 kg of flour. How much flour is needed in total?",
+        options: ["40 kg", "64 kg", "80 kg", "160 kg"],
+        answer: "64 kg",
+        explanation: "Multiply the number of loaves by the flour per loaf: 160 × 0.4 kg = 64 kg."
+      },
+      {
+        id: 13,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A cylindrical tank contains 0.628 m³ of water, and water costs ₱450 per cubic meter. Which calculation gives the total cost?",
+        options: ["0.628 + 450", "450 ÷ 0.628", "0.628 ÷ 450", "0.628 × 450 (₱282.60)"],
+        answer: "0.628 × 450 (₱282.60)",
+        explanation: "Multiply the volume in cubic meters by the unit rate per cubic meter: 0.628 × ₱450 = ₱282.60."
+      },
+      {
+        id: 14,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "An airplane is 9,000 ft above level ground, and the angle of depression to its touchdown point is 15°. What is the horizontal distance to the touchdown point?",
+        options: ["2,411.54 ft", "9,317.49 ft", "33,588.46 ft", "34,773.32 ft"],
+        answer: "33,588.46 ft",
+        explanation: "Using alternate interior angles, tan 15° = 9,000 / x → x = 9,000 ÷ tan 15° ≈ 33,588.46 ft."
+      },
+      {
+        id: 15,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "A surveyor stands 100 m horizontally from the base of a cliff, and the angle of elevation to its top is 35°. Neglecting instrument height, how tall is the cliff?",
+        options: ["57.36 m", "70.02 m", "81.92 m", "142.81 m"],
+        answer: "70.02 m",
+        explanation: "tan 35° = height ÷ 100 → height = 100 × tan 35° ≈ 70.02 m."
+      },
+      {
+        id: 16,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "A 60 m cable connects level ground to the top of a pole, making a 52° angle with the ground. What is the height of the pole?",
+        options: ["36.94 m", "47.28 m", "76.14 m", "76.80 m"],
+        answer: "47.28 m",
+        explanation: "The cable is the hypotenuse (60 m) and height is opposite 52°: sin 52° = height ÷ 60 → height = 60 × sin 52° ≈ 47.28 m."
+      },
+      {
+        id: 17,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "A hiker walks 9 km due east and then 12 km due north. What is the straight-line distance from the starting point?",
+        options: ["10.5 km", "15 km", "21 km", "108 km"],
+        answer: "15 km",
+        explanation: "East and North form a right angle. By the Pythagorean theorem: √(9² + 12²) = √(81 + 144) = √225 = 15 km."
+      },
+      {
+        id: 18,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "Tower A is 12 km due west of Tower B. Smoke is observed on a bearing of 045° from Tower A and 315° from Tower B. What type of triangle is formed?",
+        options: [
+          "Equilateral triangle",
+          "Scalene obtuse triangle",
+          "An isosceles right triangle with 45° base angles",
+          "Right triangle with 30° and 60° angles"
+        ],
+        answer: "An isosceles right triangle with 45° base angles",
+        explanation: "From A, 045° is 45° north of east. From B, 315° is 45° north of west. Both base angles are 45°, leaving a 90° angle at the smoke."
+      },
+      {
+        id: 19,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A rectangular floor measures 9 m by 7 m. A rectangular stairwell measuring 3 m by 2 m lies entirely within it and will not be tiled. What is the area to be tiled?",
+        options: ["51 m²", "57 m²", "63 m²", "69 m²"],
+        answer: "57 m²",
+        explanation: "Total floor area = 9 × 7 = 63 m². Subtract the stairwell area (3 × 2 = 6 m²): 63 − 6 = 57 m²."
+      },
+      {
+        id: 20,
+        category: "word",
+        categoryName: "Word Problems & Costs",
+        question: "Using the 57 m² tiled area from the previous question, each box of tiles covers 2.4 m² and costs ₱900. What is the total cost of the tiles?",
+        options: ["₱21,600", "₱20,700", "₱21,375", "₱22,500"],
+        answer: "₱21,600",
+        explanation: "57 ÷ 2.4 = 23.75 boxes, which must round up to 24 full boxes. Total cost = 24 × ₱900 = ₱21,600."
+      },
+      {
+        id: 21,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A circular tabletop has a radius of 2 m, and glass costs ₱35 per m². Using π ≈ 3.14, what is the cost of the glass?",
+        options: ["₱219.80", "₱439.60", "₱879.20", "₱1,381.60"],
+        answer: "₱439.60",
+        explanation: "Circle Area = πr² = 3.14 × 2² = 12.56 m². Cost = 12.56 × ₱35 = ₱439.60."
+      },
+      {
+        id: 22,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A rectangular garden is 10 m long and 6 m wide. A circular fountain with a radius of 2 m lies entirely inside it. What is the remaining garden area? (Use π ≈ 3.14)",
+        options: ["47.44 m²", "53.72 m²", "60.00 m²", "72.56 m²"],
+        answer: "47.44 m²",
+        explanation: "Rectangle area = 10 × 6 = 60 m². Fountain area = 3.14 × 2² = 12.56 m². Remaining area = 60 − 12.56 = 47.44 m²."
+      },
+      {
+        id: 23,
+        category: "word",
+        categoryName: "Word Problems & Costs",
+        question: "A rectangular garden is enclosed using 32 m of fencing. Which dimensions give the maximum possible area?",
+        options: ["10 m × 6 m", "12 m × 4 m", "8 m × 8 m", "14 m × 2 m"],
+        answer: "8 m × 8 m",
+        explanation: "With a perimeter of 32 m, length + width = 16 m. A square (8 m × 8 m = 64 m²) always maximizes area for a fixed perimeter."
+      },
+      {
+        id: 24,
+        category: "word",
+        categoryName: "Word Problems & Costs",
+        question: "For a 40 m² kitchen floor, Contractor A charges ₱450/m² plus ₱2,500 delivery, while Contractor B charges ₱550/m² with free delivery. Which contractor is cheaper and by how much?",
+        options: [
+          "Contractor A by ₱1,500 (₱20,500 vs. ₱22,000)",
+          "Contractor B by ₱1,500 (₱22,000 vs. ₱23,500)",
+          "Contractor A by ₱4,000 (₱18,000 vs. ₱22,000)",
+          "Both contractors cost the exact same amount"
+        ],
+        answer: "Contractor A by ₱1,500 (₱20,500 vs. ₱22,000)",
+        explanation: "Contractor A = (40 × ₱450) + ₱2,500 = ₱18,000 + ₱2,500 = ₱20,500. Contractor B = 40 × ₱550 = ₱22,000. Difference = ₱1,500."
+      },
+      {
+        id: 25,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A cube with an internal edge length of 40 cm is filled with rice priced at ₱45 per liter. What is the total cost of the rice?",
+        options: ["₱1,800", "₱2,880", "₱4,500", "₱7,200"],
+        answer: "₱2,880",
+        explanation: "Cube Volume = 40³ = 64,000 cm³. Convert to liters: 64,000 ÷ 1,000 = 64 L. Total cost = 64 × ₱45 = ₱2,880."
+      },
+      {
+        id: 26,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A balikbayan box measures 60 cm × 40 cm × 75 cm, and shipping costs ₱3,000 per cubic meter. Which method correctly calculates the shipping cost?",
+        options: [
+          "60 × 40 × 75 × 3,000",
+          "(60 + 40 + 75) × 3,000",
+          "0.6 × 0.4 × 0.75 × 3,000",
+          "(0.6 × 0.4 × 0.75) ÷ 3,000"
+        ],
+        answer: "0.6 × 0.4 × 0.75 × 3,000",
+        explanation: "First convert centimeters to meters: 0.6 m × 0.4 m × 0.75 m = 0.18 m³. Then multiply by ₱3,000/m³ (= ₱540)."
+      },
+      {
+        id: 27,
+        category: "word",
+        categoryName: "Word Problems & Costs",
+        question: "Plan A produces 120 loaves for ₱3,600, while Plan B produces 180 loaves for ₱5,040. Which plan has the lower ingredient cost per loaf?",
+        options: [
+          "Plan A at ₱30 per loaf",
+          "Plan B at ₱28 per loaf",
+          "Plan A at ₱25 per loaf",
+          "Both plans cost ₱30 per loaf"
+        ],
+        answer: "Plan B at ₱28 per loaf",
+        explanation: "Plan A unit cost = ₱3,600 ÷ 120 = ₱30/loaf. Plan B unit cost = ₱5,040 ÷ 180 = ₱28/loaf. Plan B is cheaper by ₱2 per loaf."
+      },
+      {
+        id: 28,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "Two ships leave the same port for 3 hours: Ship A sails on a bearing of 030° at 12 knots, and Ship B sails on a bearing of 120° at 16 knots. How far apart are they?",
+        options: ["36 nautical miles", "48 nautical miles", "60 nautical miles", "84 nautical miles"],
+        answer: "60 nautical miles",
+        explanation: "Ship A distance = 12 × 3 = 36 NM. Ship B distance = 16 × 3 = 48 NM. Since 120° − 30° = 90°, √(36² + 48²) = √(1,296 + 2,304) = 60 NM."
+      },
+      {
+        id: 29,
+        category: "trig",
+        categoryName: "Trigonometry & Bearings",
+        question: "A ship travels 40 NM due east from A to B, then 60 NM in a direction between due north and due east (30° north of east) to C. What is the directional bearing of C from B?",
+        options: ["N 30° W", "S 30° E", "N 60° W", "N 60° E (30° North of East)"],
+        answer: "N 60° E (30° North of East)",
+        explanation: "Moving 30° north of due east places the path in the North-East quadrant (60° east of north, or 30° north of east)."
+      },
+      {
+        id: 30,
+        category: "geometry",
+        categoryName: "Area, Volume & Capacity",
+        question: "A rectangular box has internal dimensions of 60 cm × 40 cm × 50 cm (120 L capacity, since 1 L = 1,000 cm³). Which statement about doubling all three dimensions is mathematically INCORRECT?",
+        options: [
+          "Doubling all three dimensions multiplies the volume by 8.",
+          "The new capacity of the enlarged box is 960 L.",
+          "Each edge length of the box is multiplied by 2.",
+          "Doubling all three dimensions results in a 240 L capacity."
+        ],
+        answer: "Doubling all three dimensions results in a 240 L capacity.",
+        explanation: "Doubling all 3 dimensions scales volume by 2³ = 8, giving 120 L × 8 = 960 L. Claiming it only doubles to 240 L is incorrect."
+      }
+    ];
+
+    /* ==========================================================================
+       APPLICATION STATE & DOM REFERENCES
+       ========================================================================== */
+    const state = {
+      selectedCategory: "all",
+      shuffleQuestions: true,
+      shuffleOptions: true,
+      timedMode: false,
+
+      activeQuestions: [],
+      currentIndex: 0,
+      score: 0,
+      streak: 0,
+      bestStreak: 0,
+      correctCount: 0,
+      answeredCurrent: false,
+
+      timerInterval: null,
+      timeLeft: 45,
+
+      categoryStats: {},
+      missedQuestions: []
+    };
+
+    const dom = {
+      themeToggle: document.getElementById("themeToggle"),
+      quitBtn: document.getElementById("quitBtn"),
+
+      startScreen: document.getElementById("startScreen"),
+      quizScreen: document.getElementById("quizScreen"),
+      summaryScreen: document.getElementById("summaryScreen"),
+
+      categorySelector: document.getElementById("categorySelector"),
+      shuffleQuestionsToggle: document.getElementById("shuffleQuestionsToggle"),
+      shuffleOptionsToggle: document.getElementById("shuffleOptionsToggle"),
+      timedModeToggle: document.getElementById("timedModeToggle"),
+      startQuizBtn: document.getElementById("startQuizBtn"),
+
+      hudScore: document.getElementById("hudScore"),
+      hudStreak: document.getElementById("hudStreak"),
+      hudThirdLabel: document.getElementById("hudThirdLabel"),
+      hudThirdValue: document.getElementById("hudThirdValue"),
+      progressBar: document.getElementById("progressBar"),
+
+      qCategoryBadge: document.getElementById("qCategoryBadge"),
+      qNumberLabel: document.getElementById("qNumberLabel"),
+      questionText: document.getElementById("questionText"),
+      optionsContainer: document.getElementById("optionsContainer"),
+
+      feedbackPanel: document.getElementById("feedbackPanel"),
+      feedbackTitle: document.getElementById("feedbackTitle"),
+      feedbackExplanation: document.getElementById("feedbackExplanation"),
+      nextBtnWrap: document.getElementById("nextBtnWrap"),
+      nextQuestionBtn: document.getElementById("nextQuestionBtn"),
+
+      finalAccuracy: document.getElementById("finalAccuracy"),
+      summaryHeadline: document.getElementById("summaryHeadline"),
+      summarySubtext: document.getElementById("summarySubtext"),
+      finalPoints: document.getElementById("finalPoints"),
+      finalCorrectCount: document.getElementById("finalCorrectCount"),
+      finalBestStreak: document.getElementById("finalBestStreak"),
+      categoryBreakdown: document.getElementById("categoryBreakdown"),
+      reviewMissedBtn: document.getElementById("reviewMissedBtn"),
+      playAgainBtn: document.getElementById("playAgainBtn"),
+      missedReviewContainer: document.getElementById("missedReviewContainer")
+    };
+
+    /* ==========================================================================
+       UTILITY FUNCTIONS
+       ========================================================================== */
+    function shuffleArray(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function initTheme() {
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      setTheme(prefersDark ? "dark" : "light");
+    }
+
+    function setTheme(mode) {
+      document.documentElement.setAttribute("data-theme", mode);
+      dom.themeToggle.textContent = mode === "dark" ? "☀️ Light" : "🌙 Dark";
+    }
+
+    /* ==========================================================================
+       EVENT LISTENERS (SETUP & NAVIGATION)
+       ========================================================================== */
+    dom.themeToggle.addEventListener("click", () => {
+      const current = document.documentElement.getAttribute("data-theme");
+      setTheme(current === "dark" ? "light" : "dark");
+    });
+
+    dom.categorySelector.addEventListener("click", (e) => {
+      const btn = e.target.closest(".cat-option");
+      if (!btn) return;
+      document.querySelectorAll(".cat-option").forEach(el => el.classList.remove("selected"));
+      btn.classList.add("selected");
+      state.selectedCategory = btn.dataset.category;
+    });
+
+    dom.startQuizBtn.addEventListener("click", startQuiz);
+    dom.nextQuestionBtn.addEventListener("click", advanceQuestion);
+    dom.playAgainBtn.addEventListener("click", startQuiz);
+
+    dom.quitBtn.addEventListener("click", () => {
+      clearTimer();
+      showScreen("start");
+    });
+
+    dom.reviewMissedBtn.addEventListener("click", () => {
+      dom.missedReviewContainer.classList.toggle("hidden");
+      dom.missedReviewContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    function showScreen(screenName) {
+      dom.startScreen.classList.add("hidden");
+      dom.quizScreen.classList.add("hidden");
+      dom.summaryScreen.classList.add("hidden");
+
+      if (screenName === "start") {
+        dom.startScreen.classList.remove("hidden");
+        dom.quitBtn.classList.add("hidden");
+      } else if (screenName === "quiz") {
+        dom.quizScreen.classList.remove("hidden");
+        dom.quitBtn.classList.remove("hidden");
+      } else if (screenName === "summary") {
+        dom.summaryScreen.classList.remove("hidden");
+        dom.quitBtn.classList.remove("hidden");
+      }
+    }
+
+    /* ==========================================================================
+       GAMEPLAY ENGINE
+       ========================================================================== */
+    function startQuiz() {
+      state.shuffleQuestions = dom.shuffleQuestionsToggle.checked;
+      state.shuffleOptions = dom.shuffleOptionsToggle.checked;
+      state.timedMode = dom.timedModeToggle.checked;
+
+      // Filter by selected category
+      let pool = state.selectedCategory === "all"
+        ? [...QUESTIONS_DB]
+        : QUESTIONS_DB.filter(q => q.category === state.selectedCategory);
+
+      if (state.shuffleQuestions) {
+        pool = shuffleArray(pool);
+      }
+
+      // Reset session metrics
+      state.activeQuestions = pool;
+      state.currentIndex = 0;
+      state.score = 0;
+      state.streak = 0;
+      state.bestStreak = 0;
+      state.correctCount = 0;
+      state.missedQuestions = [];
+      state.categoryStats = {
+        trig: { label: "Trigonometry & Bearings", correct: 0, total: 0 },
+        geometry: { label: "Area, Volume & Capacity", correct: 0, total: 0 },
+        word: { label: "Word Problems & Costs", correct: 0, total: 0 }
+      };
+
+      pool.forEach(q => {
+        state.categoryStats[q.category].total += 1;
+      });
+
+      showScreen("quiz");
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      clearTimer();
+      state.answeredCurrent = false;
+
+      const q = state.activeQuestions[state.currentIndex];
+      const total = state.activeQuestions.length;
+      const currentNum = state.currentIndex + 1;
+
+      // Update HUD
+      dom.hudScore.textContent = state.score.toLocaleString();
+      dom.hudStreak.textContent = `${state.streak} 🔥`;
+      dom.qCategoryBadge.textContent = q.categoryName;
+      dom.qNumberLabel.textContent = `Question ${currentNum} of ${total} (Item #${q.id})`;
+
+      // Progress bar
+      const pct = ((currentNum - 1) / total) * 100;
+      dom.progressBar.style.width = `${pct}%`;
+
+      // Question text
+      dom.questionText.textContent = q.question;
+
+      // Prepare options
+      const displayOptions = state.shuffleOptions ? shuffleArray(q.options) : [...q.options];
+      const letters = ["A", "B", "C", "D"];
+
+      dom.optionsContainer.innerHTML = "";
+      displayOptions.forEach((optText, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "option-btn";
+        btn.dataset.value = optText;
+        btn.innerHTML = `
+          <span class="option-letter">${letters[idx]}</span>
+          <span>${optText}</span>
+        `;
+        btn.addEventListener("click", () => handleAnswerSelection(btn, optText));
+        dom.optionsContainer.appendChild(btn);
+      });
+
+      // Reset feedback & next button
+      dom.feedbackPanel.classList.add("hidden");
+      dom.feedbackPanel.classList.remove("is-correct", "is-wrong");
+      dom.nextBtnWrap.classList.add("hidden");
+      dom.nextQuestionBtn.textContent = currentNum === total ? "View Final Results 🎉" : "Next Question →";
+
+      // Configure 3rd HUD box (Timer vs Progress)
+      if (state.timedMode) {
+        state.timeLeft = 45;
+        dom.hudThirdLabel.textContent = "Time Left";
+        dom.hudThirdValue.textContent = `${state.timeLeft}s`;
+        dom.hudThirdValue.classList.remove("timer-danger");
+        startQuestionTimer();
+      } else {
+        dom.hudThirdLabel.textContent = "Progress";
+        dom.hudThirdValue.textContent = `${currentNum} / ${total}`;
+        dom.hudThirdValue.classList.remove("timer-danger");
+      }
+    }
+
+    function startQuestionTimer() {
+      state.timerInterval = setInterval(() => {
+        state.timeLeft -= 1;
+        dom.hudThirdValue.textContent = `${state.timeLeft}s`;
+
+        if (state.timeLeft <= 10) {
+          dom.hudThirdValue.classList.add("timer-danger");
+        }
+
+        if (state.timeLeft <= 0) {
+          clearTimer();
+          handleTimeExpired();
+        }
+      }, 1000);
+    }
+
+    function clearTimer() {
+      if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+      }
+    }
+
+    function handleTimeExpired() {
+      if (state.answeredCurrent) return;
+      state.answeredCurrent = true;
+      state.streak = 0;
+
+      const q = state.activeQuestions[state.currentIndex];
+      revealAnswers(null, q.answer);
+
+      state.missedQuestions.push({
+        question: q.question,
+        userAnswer: "Time Expired (No Answer)",
+        correctAnswer: q.answer,
+        explanation: q.explanation
+      });
+
+      dom.hudStreak.textContent = `0 🔥`;
+      showFeedback(false, "⏱️ Time's Up!", q.explanation);
+    }
+
+    function handleAnswerSelection(selectedBtn, chosenValue) {
+      if (state.answeredCurrent) return;
+      state.answeredCurrent = true;
+      clearTimer();
+
+      const q = state.activeQuestions[state.currentIndex];
+      const isCorrect = chosenValue === q.answer;
+
+      revealAnswers(selectedBtn, q.answer);
+
+      if (isCorrect) {
+        state.correctCount += 1;
+        state.streak += 1;
+        if (state.streak > state.bestStreak) {
+          state.bestStreak = state.streak;
+        }
+        state.categoryStats[q.category].correct += 1;
+
+        // Points calculation: 100 base + streak bonus + optional time bonus
+        const streakBonus = Math.min(state.streak - 1, 5) * 20;
+        const timeBonus = state.timedMode ? state.timeLeft * 2 : 0;
+        const earned = 100 + streakBonus + timeBonus;
+        state.score += earned;
+
+        dom.hudScore.textContent = state.score.toLocaleString();
+        dom.hudStreak.textContent = `${state.streak} 🔥`;
+
+        showFeedback(true, `✅ Correct! +${earned} pts`, q.explanation);
+      } else {
+        state.streak = 0;
+        dom.hudStreak.textContent = `0 🔥`;
+
+        state.missedQuestions.push({
+          question: q.question,
+          userAnswer: chosenValue,
+          correctAnswer: q.answer,
+          explanation: q.explanation
+        });
+
+        showFeedback(false, `❌ Incorrect — Correct Answer: ${q.answer}`, q.explanation);
+      }
+    }
+
+    function revealAnswers(selectedBtn, correctValue) {
+      const allBtns = dom.optionsContainer.querySelectorAll(".option-btn");
+      allBtns.forEach(btn => {
+        btn.disabled = true;
+        if (btn.dataset.value === correctValue) {
+          btn.classList.add("correct");
+        } else if (btn === selectedBtn) {
+          btn.classList.add("incorrect");
+        }
+      });
+
+      // Advance progress bar immediately upon answering
+      const completedPct = ((state.currentIndex + 1) / state.activeQuestions.length) * 100;
+      dom.progressBar.style.width = `${completedPct}%`;
+    }
+
+    function showFeedback(isCorrect, titleText, explanationText) {
+      dom.feedbackPanel.classList.remove("hidden", "is-correct", "is-wrong");
+      dom.feedbackPanel.classList.add(isCorrect ? "is-correct" : "is-wrong");
+      dom.feedbackTitle.textContent = titleText;
+      dom.feedbackExplanation.textContent = explanationText;
+      dom.nextBtnWrap.classList.remove("hidden");
+    }
+
+    function advanceQuestion() {
+      if (state.currentIndex + 1 < state.activeQuestions.length) {
+        state.currentIndex += 1;
+        renderCurrentQuestion();
+      } else {
+        renderSummary();
+      }
+    }
+
+    /* ==========================================================================
+       SUMMARY & ANALYTICS SCREEN
+       ========================================================================== */
+    function renderSummary() {
+      clearTimer();
+      showScreen("summary");
+
+      const total = state.activeQuestions.length;
+      const accuracy = total > 0 ? Math.round((state.correctCount / total) * 100) : 0;
+
+      dom.finalAccuracy.textContent = `${accuracy}%`;
+      dom.finalPoints.textContent = state.score.toLocaleString();
+      dom.finalCorrectCount.textContent = `${state.correctCount} / ${total}`;
+      dom.finalBestStreak.textContent = `${state.bestStreak} 🔥`;
+
+      if (accuracy >= 90) {
+        dom.summaryHeadline.textContent = "Outstanding Mastery! 🏆";
+        dom.summarySubtext.textContent = "You're completely ready to ace the Term 2 Summative Test.";
+      } else if (accuracy >= 75) {
+        dom.summaryHeadline.textContent = "Great Job! 🎯";
+        dom.summarySubtext.textContent = "Strong performance! Review any missed items below to lock in 100%.";
+      } else {
+        dom.summaryHeadline.textContent = "Keep Practicing! 📚";
+        dom.summarySubtext.textContent = "Check the step-by-step solutions below and try another round.";
+      }
+
+      // Render Category Breakdown Bars
+      dom.categoryBreakdown.innerHTML = "";
+      Object.values(state.categoryStats).forEach(cat => {
+        if (cat.total === 0) return;
+        const catPct = Math.round((cat.correct / cat.total) * 100);
+        const row = document.createElement("div");
+        row.className = "cat-bar-row";
+        row.innerHTML = `
+          <div class="cat-bar-top">
+            <span>${cat.label}</span>
+            <span>${cat.correct}/${cat.total} (${catPct}%)</span>
+          </div>
+          <div class="progress-track" style="margin-bottom:0; height:6px;">
+            <div class="progress-fill" style="width:${catPct}%;"></div>
+          </div>
+        `;
+        dom.categoryBreakdown.appendChild(row);
+      });
+
+      // Render Missed Questions Review
+      dom.missedReviewContainer.innerHTML = "";
+      dom.missedReviewContainer.classList.add("hidden");
+
+      if (state.missedQuestions.length > 0) {
+        dom.reviewMissedBtn.classList.remove("hidden");
+        dom.reviewMissedBtn.textContent = `Review Missed Questions (${state.missedQuestions.length})`;
+
+        state.missedQuestions.forEach((item, idx) => {
+          const card = document.createElement("div");
+          card.className = "missed-item";
+          card.innerHTML = `
+            <div class="missed-q">${idx + 1}. ${item.question}</div>
+            <div class="missed-ans-row">Your Answer: <span class="tag-wrong">${item.userAnswer}</span></div>
+            <div class="missed-ans-row">Correct Answer: <span class="tag-right">${item.correctAnswer}</span></div>
+            <div class="feedback-body" style="margin-top:6px;"><strong>Solution:</strong> ${item.explanation}</div>
+          `;
+          dom.missedReviewContainer.appendChild(card);
+        });
+      } else {
+        dom.reviewMissedBtn.classList.add("hidden");
+      }
+    }
+
+    // Initialize system theme on load
+    window.addEventListener("DOMContentLoaded", initTheme);
+  </script>
+</body>
+</html>
